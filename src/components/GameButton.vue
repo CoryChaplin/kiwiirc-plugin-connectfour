@@ -1,8 +1,21 @@
 <template>
-    <div>
-        <div v-if="showButton" @click="buttonClicked">
-            <a>Play Connect Four</a>
-        </div>
+    <div class="cf-header-btn-wrap">
+        <button
+            v-if="showButton"
+            class="u-button u-button-primary cf-header-btn"
+            title="Challenge to Connect Four"
+            @click="buttonClicked"
+        >
+            <svg class="cf-header-btn__icon" viewBox="0 0 20 20" width="13" height="13" fill="currentColor" aria-hidden="true">
+                <circle cx="4"  cy="7"  r="2.5" />
+                <circle cx="10" cy="7"  r="2.5" />
+                <circle cx="16" cy="7"  r="2.5" />
+                <circle cx="4"  cy="13" r="2.5" />
+                <circle cx="10" cy="13" r="2.5" />
+                <circle cx="16" cy="13" r="2.5" />
+            </svg>
+            Connect Four
+        </button>
     </div>
 </template>
 
@@ -101,3 +114,35 @@ export default {
 };
 </script>
 
+<style>
+#connectfour .cf-header-btn-wrap {
+    display: inline-flex;
+    align-items: center;
+}
+
+.cf-header-btn {
+    display: inline-flex !important;
+    align-items: center;
+    gap: 5px;
+    padding: 3px 10px !important;
+    font-size: 0.85em;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: opacity 0.2s, transform 0.1s;
+    white-space: nowrap;
+}
+
+.cf-header-btn:hover {
+    opacity: 0.88;
+    transform: translateY(-1px);
+}
+
+.cf-header-btn:active {
+    transform: translateY(0);
+}
+
+.cf-header-btn__icon {
+    flex-shrink: 0;
+    opacity: 0.9;
+}
+</style>
