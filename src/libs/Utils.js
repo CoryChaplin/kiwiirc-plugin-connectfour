@@ -61,3 +61,59 @@ export function incrementUnread(buffer) {
     }
 }
 
+export function inviteToConnectFour(network, targetNick, errorBuffer) {
+    const nick = (targetNick || '').trim();
+    if (!nick) {
+        if (errorBuffer) {
+            kiwi.state.addMessage(errorBuffer, {
+                nick: '*', message: 'Usage: /connectfour <nick>', type: 'error',
+            });
+        }
+        return false;
+    }
+    if (nick === network.nick) {
+        if (errorBuffer) {
+            kiwi.state.addMessage(errorBuffer, {
+                nick: '*', message: 'You cannot invite yourself to play Connect Four.', type: 'error',
+            });
+        }
+        return false;
+    }
+
+    const buffer = kiwi.state.getOrAddBufferByName(network.id, nick);
+
+    if (!getGame(nick)) {
+        newGame(network, network.nick, nick);
+    }
+    const game = getGame(nick);
+
+    if ((game.getShowGame() && !game.getGameOver()) || game.getInviteSent()) {
+        if (errorBuffer) {
+            kiwi.state.addMessage(errorBuffer, {
+                nick: '*',
+                message: 'A game or invite is already active with ' + nick + '.',
+                type: 'error',
+            });
+        }
+        return false;
+    }
+
+    game.setInviteSent(true);
+    if (!game.getInviteTimeout()) {
+        game.setInviteTimeout(window.setTimeout(() => {
+            game.setInviteTimeout(null);
+            game.setInviteSent(false);
+            kiwi.state.addMessage(buffer, {
+                nick: '*',
+                message: 'The invite to ' + nick + ' timed out — maybe they don\'t have the Connect Four plugin?',
+                type: 'message',
+            });
+        }, 4000));
+    }
+    sendData(network, nick, { cmd: 'invite' });
+    kiwi.state.addMessage(buffer, {
+        nick: '*', message: nick + ' has been invited to play Connect Four!', type: 'message',
+    });
+    return true;
+}
+
